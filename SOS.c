@@ -11,9 +11,8 @@ int board[25] = {
 	:,:,:,:,:,
 }
 */
-/// 0 , 1 , 2 , 3
+
 enum { CHARO, CHARS, BORDER, EMPTY };
-enum { HUMANWIN, COMPWIN, DRAW };
 enum { HUMAN, COMP };
 
 int ConvertTo25[9] = {
@@ -87,11 +86,11 @@ void RunGame() {
 void InitialiseBoard(int *board) {
 	int index = 0;
 
-	for(index = 0; index < 25; ++index) {
+	for(index = 0; index < 25; index++) {
 		board[index] = BORDER;
 	}
 
-	for(index = 0; index < 9; ++index) {
+	for(index = 0; index < 9; index++) {
 		board[ConvertTo25[index]] = EMPTY;
 	}
 	int left_right = (rand() % 2);
@@ -109,7 +108,7 @@ void PrintBoard(int *board) {
 	char pceChars[] = "OS|-";
 
 	printf("\n\nBoard:\n\n");
-	for(index = 0; index < 9; ++index) {
+	for(index = 0; index < 9; index++) {
 		if(index!=0 && index%3==0) {
 			printf("\n\n");
 		}
@@ -122,7 +121,7 @@ void PrintBoard(int *board) {
 int HasEmpty(int *board) {
 	int index = 0;
 
-	for(index = 0; index < 9; ++index) {
+	for(index = 0; index < 9; index++) {
 		if( board[ConvertTo25[index]] == EMPTY) return 1;
 	}
 	return 0;
