@@ -79,6 +79,9 @@ int main(int argc,char *argv[]){
         flag = 1;
      }
      else{
+		m_counter = 0;
+		a_counter = 0;
+		b_counter = 0;
         printf("\nSomething went wrong\n");
      }
     }

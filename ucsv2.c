@@ -3,20 +3,29 @@
 #include <time.h>
 #include <string.h>
 
-#define N                8
-#define n            2*N+1
+
 #define MAX_INT 2147483647
 #define HASH_TABLE_SIZE 20
 
 typedef struct state {
-    char name[n];
+    char *name;///char name[n]
     int score;
     int blank;
     struct state *next;
     struct state *nextH;
     struct state *prev;
 } State;
-
+///changes
+int N;
+int n;
+int pushes;
+char first[100];
+int flag = 0;
+int m_counter = 0;
+int a_counter = 0;
+int b_counter = 0;
+int pushes = 0;
+///changes
 // Global var
 State *root;
 State *hashTable[HASH_TABLE_SIZE];
@@ -44,15 +53,41 @@ State *searchInHashTable(char * name);
 int main(){
     printf("\n---                            UCS                            ---\n");
     initializeHashTable();
-    char first[n] = "AAAAAAAA-MMMMMMMM";
-    //char first[n] = "AMA-MMA";
 
     clock_t time_now = clock();
-
+     ///OPTIMAL
+    while(flag!=1){
+     printf("\nInsert the initial balls positions(space with - )\n");
+     scanf("%s",first);
+     n = strlen(first);
+     N = n/2;
+     if((n>1) && (n%2==1)){
+        for(int i = 0;i<n;i++){
+           if(first[i]=='M'){
+                m_counter++;
+           }
+           else if(first[i]=='A'){
+                a_counter++;
+           }
+           else{
+                b_counter++;
+           }
+        }
+     }
+     if((m_counter == N) && (a_counter == N) && (b_counter == 1)){
+        flag = 1;
+     }
+     else{
+		m_counter = 0;
+		a_counter = 0;
+		b_counter = 0;
+        printf("\nSomething went wrong\n");
+     }
+    }
+    ///OPTIMAL
     constructRoot(first);
     printf(" %s (name)  %d (blank)  %d (score) %d (final)\n", root->name, root->blank, root->score, is_gold(root));
     insertInHashTable(root);
-
     State* bestState = malloc(sizeof(State));
     bestState = ucs();
 
@@ -61,7 +96,7 @@ int main(){
     } else {
         printf("\n No paths found!\n");
     }
-
+    printf("pushes : %d",pushes);
     time_now = clock() - time_now;
     double time_taken = ((double)time_now)/CLOCKS_PER_SEC; // in seconds
     printf("\n -- program took %f seconds to execute -- \n", time_taken);
@@ -80,7 +115,7 @@ State* ucs(){
         State* nowState;
         nowState = peek();
         pop();
-
+        //printf(" %s (name)  %d (blank)  %d (score) %d (final)\n", nowState->name, nowState->blank, nowState->score, is_gold(nowState));
         if (is_gold(nowState) == 1){
             count_gold++;
             if (nowState->score < bestState->score){
@@ -184,7 +219,7 @@ State* peek(){
 // Construct root
 void constructRoot(char* buffer){
     root = (State*)malloc(sizeof(State));
-    strncpy(root->name, buffer, n);
+    root->name = strdup(buffer);///strncpy
     int i;
     for(i = 0; i < n; i++){
         if (buffer[i] == '-'){
@@ -224,7 +259,7 @@ void find_next(State *myState){
 State* change(State *myState, int index){
     int k = abs(myState->blank - index);
     State *newState = (State*)malloc(sizeof(State));
-    strncpy(newState->name, myState->name, n);
+    newState->name = strdup(myState->name);
     newState->name[index] = '-';
     newState->name[myState->blank] = myState->name[index];;
     newState->blank = index;
@@ -236,6 +271,7 @@ State* change(State *myState, int index){
 
 // Function that checks if a state is golden
 int is_gold(State *myState){
+    pushes++;
     if (myState->name[n-1] != 'A'){
         return 0;
     }
@@ -257,7 +293,7 @@ void print_best(State *bestState){
     int steps = 0;
     while (bestState != NULL){
         steps++;
-        printf("%s <- ", bestState->name);
+        printf("%s , W = %d <- ",bestState->name,bestState->score);
         bestState = bestState->prev;
     }
 
